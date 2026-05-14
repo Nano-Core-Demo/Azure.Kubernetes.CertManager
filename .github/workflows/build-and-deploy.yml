@@ -44,6 +44,8 @@ jobs:
       - name: Deploy
         shell: pwsh
         run: |
+          Write-Host $env:AZURE_GROUP_DNS;
+
           $env:DNS_ZONE_ID = az network dns zone list -g $env:AZURE_GROUP_DNS --query [0].id -o tsv;
           $env:DNS_ZONE_NAME = az network dns zone list -g $env:AZURE_GROUP_DNS --query [0].name -o tsv;
           $env:DNS_ZONE_CLIENT_ID = az identity list -g $env:AZURE_GROUP_DNS --query [0].clientId -o tsv;
