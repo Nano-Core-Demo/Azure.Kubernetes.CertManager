@@ -62,8 +62,6 @@ jobs:
 
               kubectl apply -f certmanager-cluster-issuer.tmp.yaml || exit 2
               kubectl apply -f certmanager-service-monitor.tmp.yaml || exit 3
-
-              kubectl rollout restart statefulset/$env:APP_NAME -n apps || exit 4
           "@;
 
           $result = az aks command invoke `
