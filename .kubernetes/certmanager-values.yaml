@@ -120,12 +120,6 @@ cainjector:
       drop:
       - ALL
     readOnlyRootFilesystem: true
-  livenessProbe:
-    enabled: true
-    initialDelaySeconds: 60
-    periodSeconds: 30
-    failureThreshold: 3
-    timeoutSeconds: 10
   resources:
     requests:
        cpu: 10m
