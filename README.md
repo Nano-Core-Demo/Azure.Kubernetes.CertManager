@@ -1,2 +1,4 @@
-# Nano.Azure.Kubernetes.CertManager
+# Azure.Kubernetes.CertManager
+
 Kubernetes deployment for Cert-Manager, managing SSL certificates lifecycles.
+
