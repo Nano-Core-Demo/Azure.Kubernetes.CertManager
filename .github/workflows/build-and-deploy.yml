@@ -8,7 +8,7 @@ env:
   AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }} 
   AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }} 
   AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }} 
-  AZURE_GROUP: ${{ vars.AZURE_KUBERNETES_RESOURCE_GROUP }}
+  AZURE_GROUP: ${{ vars.AZURE_KUBERNETES_RESOURCE_GROUP }} '
   AZURE_GROUP_DNS: ${{ vars.AZURE_DNS_RESOURCE_GROUP }} 
   AZURE_SUBSCRIPTION_ID: ${{ github.ref == 'refs/heads/master' && secrets.PRODUCTION_AZURE_SUBSCRIPTION_ID || secrets.STAGING_AZURE_SUBSCRIPTION_ID }}
   KUBERNETES_CLUSTER: ${{ github.ref == 'refs/heads/master' && vars.PRODUCTION_KUBERNETES_CLUSTER || vars.STAGING_KUBERNETES_CLUSTER }}
@@ -50,17 +50,16 @@ jobs:
 
           Get-Content .kubernetes/certmanager-values.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content .kubernetes/certmanager-values.tmp.yaml;
           Get-Content .kubernetes/certmanager-cluster-issuer.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content ".kubernetes/certmanager-cluster-issuer.tmp.yaml";
+          Get-Content .kubernetes/certmanager-service-monitor.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content .kubernetes/certmanager-service-monitor.tmp.yaml;
 
           $command = @"
               set -eu
 
-              #helm repo add jetstack https://charts.jetstack.io || exit 1
-              #helm repo update || exit 2
+              helm upgrade --install $env:APP_NAME oci://quay.io/jetstack/charts/cert-manager --atomic --namespace $env:KUBERNETES_NAMESPACE --version $env:CHART_VERSION -f certmanager-values.tmp.yaml || exit 1
 
-              helm upgrade --install $env:APP_NAME oci://quay.io/jetstack/charts/cert-manager --atomic --namespace $env:KUBERNETES_NAMESPACE --version $env:CHART_VERSION -f certmanager-values.tmp.yaml || exit 3
-
-              kubectl apply -f certmanager-service-account.tmp.yaml || exit 4
-              kubectl apply -f certmanager-cluster-issuer.tmp.yaml || exit 4
+              kubectl apply -f certmanager-service-account.tmp.yaml || exit 2
+              kubectl apply -f certmanager-cluster-issuer.tmp.yaml || exit 3
+              kubectl apply -f certmanager-service-monitor.tmp.yaml || exit 4
 
               kubectl rollout restart statefulset/$env:APP_NAME -n apps || exit 5
           "@;
@@ -70,6 +69,7 @@ jobs:
               -n $env:KUBERNETES_CLUSTER `
               --file .kubernetes/certmanager-values.tmp.yaml `
               --file .kubernetes/certmanager-cluster-issuer.tmp.yaml `
+              --file .kubernetes/certmanager-service-monitor.tmp.yaml `
               --command $command `
               --output json | ConvertFrom-Json;
 

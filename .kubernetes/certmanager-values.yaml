@@ -56,10 +56,6 @@ livenessProbe:
 
 prometheus:
   enabled: true
-  servicemonitor:
-    enabled: true
-    path: /metrics
-    interval: 60s
 
 webhook:
   replicaCount: 2
@@ -124,6 +120,13 @@ cainjector:
       drop:
       - ALL
     readOnlyRootFilesystem: true
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    failureThreshold: 3
+    timeoutSeconds: 10
+  resources:
     requests:
        cpu: 10m
        memory: 32Mi
