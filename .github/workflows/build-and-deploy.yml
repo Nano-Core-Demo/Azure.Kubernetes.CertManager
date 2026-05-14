@@ -39,9 +39,6 @@ jobs:
         run: |
           az login --service-principal -u $env:AZURE_CLIENT_ID -p $env:AZURE_CLIENT_SECRET --tenant $env:AZURE_TENANT_ID -o none;
           az account set -s $env:AZURE_SUBSCRIPTION_ID -o none;
-
-          echo $env:ZURE_GROUP;
-
           az aks get-credentials -g $env:AZURE_GROUP -n $env:KUBERNETES_CLUSTER -o none;
           
       - name: Deploy
@@ -49,7 +46,7 @@ jobs:
         run: |
           $env:DNS_ZONE_ID = az network dns zone list -g $env:AZURE_GROUP_DNS --query [0].id -o tsv;
           $env:DNS_ZONE_NAME = az network dns zone list -g $env:AZURE_GROUP_DNS --query [0].name -o tsv;
-          $env:DNS_ZONE_CLIENT_ID = az identity list -g $env:AZURE_GROUP_DNS --query [0].clientId; -o tsv;
+          $env:DNS_ZONE_CLIENT_ID = az identity list -g $env:AZURE_GROUP_DNS --query [0].clientId -o tsv;
 
           Get-Content .kubernetes/certmanager-values.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content .kubernetes/certmanager-values.tmp.yaml;
           Get-Content .kubernetes/certmanager-cluster-issuer.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content ".kubernetes/certmanager-cluster-issuer.tmp.yaml";
