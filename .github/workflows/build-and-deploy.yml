@@ -44,13 +44,11 @@ jobs:
       - name: Deploy
         shell: pwsh
         run: |
-          echo $env:AZURE_GROUP_DNS;
-          Write-Host $env:AZURE_GROUP_DNS;
-
           $env:DNS_ZONE_ID = az network dns zone list -g $env:AZURE_GROUP_DNS --query [0].id -o tsv;
           $env:DNS_ZONE_NAME = az network dns zone list -g $env:AZURE_GROUP_DNS --query [0].name -o tsv;
           $env:DNS_ZONE_CLIENT_ID = az identity list -g $env:AZURE_GROUP_DNS --query [0].clientId -o tsv;
 
+          Get-Content .kubernetes/service-account.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content .kubernetes/service-account.tmp.yaml;
           Get-Content .kubernetes/certmanager-values.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content .kubernetes/certmanager-values.tmp.yaml;
           Get-Content .kubernetes/certmanager-cluster-issuer.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content ".kubernetes/certmanager-cluster-issuer.tmp.yaml";
           Get-Content .kubernetes/certmanager-service-monitor.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content .kubernetes/certmanager-service-monitor.tmp.yaml;
@@ -60,13 +58,15 @@ jobs:
 
               helm upgrade --install $env:APP_NAME oci://quay.io/jetstack/charts/cert-manager --atomic --namespace $env:KUBERNETES_NAMESPACE --version $env:CHART_VERSION -f certmanager-values.tmp.yaml || exit 1
 
-              kubectl apply -f certmanager-cluster-issuer.tmp.yaml || exit 2
-              kubectl apply -f certmanager-service-monitor.tmp.yaml || exit 3
+              kubectl apply -f service-account.tmp.yaml || exit 2
+              kubectl apply -f certmanager-cluster-issuer.tmp.yaml || exit 3
+              kubectl apply -f certmanager-service-monitor.tmp.yaml || exit 4
           "@;
 
           $result = az aks command invoke `
               -g $env:AZURE_GROUP `
               -n $env:KUBERNETES_CLUSTER `
+              --file .kubernetes/service-account.tmp.yaml `
               --file .kubernetes/certmanager-values.tmp.yaml `
               --file .kubernetes/certmanager-cluster-issuer.tmp.yaml `
               --file .kubernetes/certmanager-service-monitor.tmp.yaml `
