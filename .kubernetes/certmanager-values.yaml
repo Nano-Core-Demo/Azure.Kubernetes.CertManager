@@ -62,7 +62,7 @@ prometheus:
   enabled: true
 
 podLabels:
-  azure.workload.identity/use: true
+  azure.workload.identity/use: "true"
 
 webhook:
   replicaCount: 2
