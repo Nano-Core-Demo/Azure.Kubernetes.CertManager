@@ -51,10 +51,6 @@ jobs:
           $env:DNS_ZONE_NAME = az network dns zone list -g $env:AZURE_GROUP_DNS --query [0].name -o tsv;
           $env:DNS_ZONE_CLIENT_ID = az identity list -g $env:AZURE_GROUP_DNS --query [0].clientId -o tsv;
 
-          echo $env:DNS_ZONE_ID;
-          echo $env:DNS_ZONE_NAME;
-          echo $env:DNS_ZONE_CLIENT_ID;
-
           Get-Content .kubernetes/certmanager-values.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content .kubernetes/certmanager-values.tmp.yaml;
           Get-Content .kubernetes/certmanager-cluster-issuer.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content ".kubernetes/certmanager-cluster-issuer.tmp.yaml";
           Get-Content .kubernetes/certmanager-service-monitor.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content .kubernetes/certmanager-service-monitor.tmp.yaml;
