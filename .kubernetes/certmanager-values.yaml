@@ -1,3 +1,8 @@
+podLabels:
+  azure.workload.identity/use: "true"
+
+
+
 global:
   nodeSelector:
     kubernetes.io/os: linux
@@ -11,7 +16,7 @@ replicaCount: %KUBERNETES_REPLICA_COUNT%
 
 serviceAccount:
   create: false
-  name: dns-zone-service-account # BUG: 
+  name: %APP_NAME%-service-account
   
 resources:
   requests:
