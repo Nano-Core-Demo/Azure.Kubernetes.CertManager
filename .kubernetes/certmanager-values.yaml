@@ -9,6 +9,10 @@ crds:
 
 replicaCount: %KUBERNETES_REPLICA_COUNT%
 
+serviceAccount:
+  create: false
+  name: dns-zone-service-account
+  
 resources:
   requests:
     cpu: %KUBERNETES_CPU_REQUEST%
