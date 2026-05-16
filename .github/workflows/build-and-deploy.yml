@@ -83,7 +83,7 @@ jobs:
           $env:SUBJECT = "system:serviceaccount:" + $env:KUBERNETES_NAMESPACE + ":cert-manager";
 
           az identity federated-credential create `
-              -g $env:AZURE_RESOURCE_GROUP `
+              -g $env:AZURE_GROUP_DNS `
               -n $env:APP_NAME_IDENTITY_CREDENTIAL `
               --identity-name $env:APP_NAME_IDENTITY `
               --issuer $env:KUBERNETES_ISSUER_URL `
