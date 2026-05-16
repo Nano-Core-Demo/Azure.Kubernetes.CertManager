@@ -77,10 +77,7 @@ jobs:
       - name: Create DNS Zone Credentials
         shell: pwsh
         run: |
-          echo aaa;
-          echo $env:AZURE_GROUP_DNS;
-
-          $env:APP_NAME_IDENTITY = az identity list -g $env:AZURE_GROUP_DNS --query [0].name -o tsv;
+          $env:APP_NAME_IDENTITY = az identity list --resource-group $env:AZURE_GROUP_DNS --query [0].name -o tsv;
           $env:KUBERNETES_ISSUER_URL = az aks list -g $env:AZURE_GROUP --query [0].['oidcIssuerProfile.issuerUrl'] -o tsv;
           $env:SUBJECT = "system:serviceaccount:" + $env:KUBERNETES_NAMESPACE + ":cert-manager";
 
