@@ -8,10 +8,6 @@ crds:
   keep: true
 
 replicaCount: %KUBERNETES_REPLICA_COUNT%
-
-serviceAccount:
-  create: false
-  name: dns-zone-sa
   
 resources:
   requests:
