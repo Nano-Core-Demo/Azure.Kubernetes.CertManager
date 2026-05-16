@@ -82,9 +82,13 @@ jobs:
           $env:KUBERNETES_ISSUER_URL = az aks list -g $env:AZURE_GROUP --query [0].[oidcIssuerProfile.issuerUrl] -o tsv;
           $env:SUBJECT = "system:serviceaccount:" + $env:KUBERNETES_NAMESPACE + ":cert-manager";
 
-          $existing = az identity federated-credential list -g $env:AZURE_GROUP_DNS --identity-name $env:APP_NAME_IDENTITY --query "[?issuer=='$env:KUBERNETES_ISSUER_URL' && subject=='$env:SUBJECT'] | [0].name" -o tsv
+          $existing = az identity federated-credential list `
+              -g $env:AZURE_GROUP_DNS `
+              --identity-name $env:APP_NAME_IDENTITY `
+              --query "[?issuer=='$env:KUBERNETES_ISSUER_URL' && subject=='$env:SUBJECT'] | [0].name" -o tsv;
 
-          if (-not $existing) {
+          if (-not $existing) 
+          {
               az identity federated-credential create `
                   -g $env:AZURE_GROUP_DNS `
                   -n $env:APP_NAME_IDENTITY_CREDENTIAL `
@@ -94,7 +98,7 @@ jobs:
 
               if ($result.exitCode -ne 0)
               {
-                  throw "Create DNS Zone Credentials Failed"
+                  throw "Create DNS Zone Credentials Failed";
               }
           }
 
