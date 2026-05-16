@@ -10,7 +10,6 @@ env:
   AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }} 
   AZURE_GROUP: ${{ vars.AZURE_KUBERNETES_RESOURCE_GROUP }}
   AZURE_GROUP_DNS: ${{ vars.AZURE_DNS_RESOURCE_GROUP }}
-  AZURE_GROUP_KUBERNETES_ASSETS: ${{ vars.AZURE_KUBERNETES_ASSETS_RESOURCE_GROUP }} 
   AZURE_SUBSCRIPTION_ID: ${{ github.ref == 'refs/heads/master' && secrets.PRODUCTION_AZURE_SUBSCRIPTION_ID || secrets.STAGING_AZURE_SUBSCRIPTION_ID }}
   KUBERNETES_CLUSTER: ${{ github.ref == 'refs/heads/master' && vars.PRODUCTION_KUBERNETES_CLUSTER || vars.STAGING_KUBERNETES_CLUSTER }}
   KUBERNETES_NODEPOOL_COMPUTE: cpu
@@ -72,12 +71,15 @@ jobs:
 
           if ($result.exitCode -ne 0)
           {
-              throw "Deploy failed"
+              throw "Deploy Cert-Manager Failed"
           }
 
       - name: Create DNS Zone Credentials
         shell: pwsh
         run: |
+          echo aaa;
+          echo $env:AZURE_GROUP_DNS;
+
           $env:APP_NAME_IDENTITY = az identity list -g $env:AZURE_GROUP_DNS --query [0].name -o tsv;
           $env:KUBERNETES_ISSUER_URL = az aks list -g $env:AZURE_GROUP --query [0].['oidcIssuerProfile.issuerUrl'] -o tsv;
           $env:SUBJECT = "system:serviceaccount:" + $env:KUBERNETES_NAMESPACE + ":cert-manager";
@@ -88,6 +90,11 @@ jobs:
               --identity-name $env:APP_NAME_IDENTITY `
               --issuer $env:KUBERNETES_ISSUER_URL `
               --subject $env:SUBJECT;
+
+          if ($result.exitCode -ne 0)
+          {
+              throw "Create DNS Zone Credentials Failed"
+          }
 
       - name: GitHub Release
         if: github.ref == 'refs/heads/master'
