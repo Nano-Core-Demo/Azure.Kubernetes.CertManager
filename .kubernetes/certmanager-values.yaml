@@ -11,7 +11,7 @@ replicaCount: %KUBERNETES_REPLICA_COUNT%
 
 serviceAccount:
   create: false
-  name: %APP_NAME%-sa
+  name: dns-zone-sa
   
 resources:
   requests:
@@ -60,6 +60,9 @@ livenessProbe:
 
 prometheus:
   enabled: true
+
+podLabels:
+  azure.workload.identity/use: "true"
 
 webhook:
   replicaCount: 2
