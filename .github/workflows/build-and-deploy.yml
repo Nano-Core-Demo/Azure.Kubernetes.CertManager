@@ -68,13 +68,9 @@ jobs:
         shell: pwsh
         run: |
           $zones = az network dns zone list -g $env:AZURE_GROUP_DNS | ConvertFrom-Json;
+          $clientId = az identity list -g $env:AZURE_GROUP_DNS --query [0].clientId -o tsv;
 
           $solvers = foreach ($zone in $zones) {
-              $clientId = az identity list -g $env:AZURE_GROUP_DNS --query "[?contains(name, '$($zone.name)')].clientId | [0]" -o tsv;
-
-              echo "aaaa";
-              echo $clientId;
-
               @{
                   selector = @{
                     dnsZones = @($zone.name)
