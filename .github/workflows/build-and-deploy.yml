@@ -72,6 +72,9 @@ jobs:
           $solvers = foreach ($zone in $zones) {
               $clientId = az identity list -g $env:AZURE_GROUP_DNS --query "[?contains(name, '$($zone.name)')].clientId | [0]" -o tsv;
 
+              echo "aaaa";
+              echo $clientId;
+
               @{
                   selector = @{
                     dnsZones = @($zone.name)
@@ -90,14 +93,11 @@ jobs:
               }
           };
 
-          $env:CLUSTER_ISSUER_SOLVERS = $solvers | ConvertTo-Json -Depth 20;
-
-          echo $env:CLUSTER_ISSUER_SOLVERS;
+          $env:CLUSTER_ISSUER_SOLVERS = @($solvers) | ConvertTo-Json -Depth 20 -Compress;
 
           Get-Content .kubernetes/certmanager-cluster-issuer.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content .kubernetes/certmanager-cluster-issuer.tmp.yaml;
 
           $aa = Get-Content .kubernetes/certmanager-cluster-issuer.tmp.yaml;
-          
           echo $aa;
 
           $command = @"
