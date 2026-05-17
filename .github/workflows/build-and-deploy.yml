@@ -81,7 +81,7 @@ jobs:
                       subscriptionID    = $env:AZURE_SUBSCRIPTION_ID
                       resourceGroupName = $env:AZURE_GROUP_DNS
                       hostedZoneName    = $zone.name
-                      environment       = AzurePublicCloud
+                      environment       = "AzurePublicCloud"
                       managedIdentity   = @{
                         clientID = $env:DNS_ZONE_CLIENT_ID
                       }
