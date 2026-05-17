@@ -89,7 +89,7 @@ jobs:
 
           if ($result.exitCode -ne 0)
           {
-              throw "Deploy Cert-Manager Failed"
+              throw "error";
           }
 
       - name: Create DNS Zone Credentials
@@ -116,7 +116,7 @@ jobs:
 
               if ($LastExitCode -ne 0)
               { 
-                  throw "Create DNS Zone Credentials Failed";
+                  throw "error"
               }
           }
 
