@@ -50,7 +50,7 @@ jobs:
           @"
                 - selector:
                     dnsZones:
-                      - $($zon.name)
+                      - $($zone.name)
                   dns01:
                     azureDNS:
                       subscriptionID: $($env:AZURE_SUBSCRIPTION_ID)
