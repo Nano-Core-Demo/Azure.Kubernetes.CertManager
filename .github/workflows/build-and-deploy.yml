@@ -90,7 +90,7 @@ jobs:
               }
           };
 
-          $env:CLUSTER_ISSUER_SOLVERS = $solvers | ConvertTo-Json -Depth 20 -Compress;
+          $env:CLUSTER_ISSUER_SOLVERS = $solvers | ConvertTo-Json -Depth 20;
 
           Get-Content .kubernetes/certmanager-cluster-issuer.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content .kubernetes/certmanager-cluster-issuer.tmp.yaml;
 
