@@ -75,12 +75,12 @@ jobs:
           @"
                 - selector:
                     dnsZones:
-                      - $($zone.name)
+                      - $zone.name
                   dns01:
                     azureDNS:
                       subscriptionID: $($env:AZURE_SUBSCRIPTION_ID)
                       resourceGroupName: $($env:AZURE_GROUP_DNS)
-                      hostedZoneName: $($zone.name)
+                      hostedZoneName: $zone.name
                       environment: AzurePublicCloud
                       managedIdentity:
                         clientID: $clientId
