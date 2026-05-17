@@ -89,7 +89,7 @@ jobs:
           #     }
           # };
 
-          $env:CLUSTER_ISSUER_SOLVERS = (
+          $env:CLUSTER_ISSUER_SOLVERS = @(
               foreach ($zone in $zones) {
           @"
                 - selector:
@@ -106,6 +106,7 @@ jobs:
           "@
               }
           ) -join "`n"
+
 
           #$env:CLUSTER_ISSUER_SOLVERS = @($solvers) | ConvertTo-Json -Depth 20 -Compress;
 
