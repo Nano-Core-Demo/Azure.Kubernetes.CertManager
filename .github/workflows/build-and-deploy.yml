@@ -80,6 +80,7 @@ jobs:
               -g $env:AZURE_GROUP_KUBERNETES `
               -n $env:KUBERNETES_CLUSTER `
               --file .kubernetes/certmanager-values.tmp.yaml `
+              --file .kubernetes/certmanager-cluster-issuer.tmp.yaml `
               --file .kubernetes/certmanager-service-monitor.tmp.yaml `
               --command $command `
               --output json | ConvertFrom-Json;
