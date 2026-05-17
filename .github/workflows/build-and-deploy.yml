@@ -90,9 +90,6 @@ jobs:
 
           Get-Content .kubernetes/certmanager-cluster-issuer.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content .kubernetes/certmanager-cluster-issuer.tmp.yaml;
 
-          $aa = Get-Content .kubernetes/certmanager-cluster-issuer.tmp.yaml;
-          echo $aa;
-
           $command = @"
               set -eu
 
