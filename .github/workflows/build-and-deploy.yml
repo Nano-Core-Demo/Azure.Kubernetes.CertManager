@@ -70,26 +70,44 @@ jobs:
           $zones = az network dns zone list -g $env:AZURE_GROUP_DNS | ConvertFrom-Json;
           $clientId = az identity list -g $env:AZURE_GROUP_DNS --query [0].clientId -o tsv;
 
-          $solvers = foreach ($zone in $zones) {
-              @{
-                  selector = @{
-                    dnsZones = @($zone.name)
-                  }
-                  dns01 = @{
-                    azureDNS = @{
-                      subscriptionID    = $env:AZURE_SUBSCRIPTION_ID
-                      resourceGroupName = $env:AZURE_GROUP_DNS
-                      hostedZoneName    = $zone.name
-                      environment       = "AzurePublicCloud"
-                      managedIdentity   = @{
-                        clientID = $clientId
-                      }
-                    }
-                  }
-              }
-          };
+          # $solvers = foreach ($zone in $zones) {
+          #     @{
+          #         selector = @{
+          #           dnsZones = @($zone.name)
+          #         }
+          #         dns01 = @{
+          #           azureDNS = @{
+          #             subscriptionID    = $env:AZURE_SUBSCRIPTION_ID
+          #             resourceGroupName = $env:AZURE_GROUP_DNS
+          #             hostedZoneName    = $zone.name
+          #             environment       = "AzurePublicCloud"
+          #             managedIdentity   = @{
+          #               clientID = $clientId
+          #             }
+          #           }
+          #         }
+          #     }
+          # };
 
-          $env:CLUSTER_ISSUER_SOLVERS = @($solvers) | ConvertTo-Json -Depth 20 -Compress;
+          $env:CLUSTER_ISSUER_SOLVERS = (
+              foreach ($zone in $zones) {
+          @"
+                - selector:
+                    dnsZones:
+                      - "$($zone.name)"
+                  dns01:
+                    azureDNS:
+                      subscriptionID: "$($env:AZURE_SUBSCRIPTION_ID)"
+                      resourceGroupName: "$($env:AZURE_GROUP_DNS)"
+                      hostedZoneName: "$($zone.name)"
+                      environment: AzurePublicCloud
+                      managedIdentity:
+                        clientID: "$clientId"
+          "@
+              }
+          ) -join "`n"
+
+          #$env:CLUSTER_ISSUER_SOLVERS = @($solvers) | ConvertTo-Json -Depth 20 -Compress;
 
           Get-Content .kubernetes/certmanager-cluster-issuer.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content .kubernetes/certmanager-cluster-issuer.tmp.yaml;
 
