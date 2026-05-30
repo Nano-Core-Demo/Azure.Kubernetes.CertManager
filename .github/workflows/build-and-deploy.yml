@@ -81,19 +81,19 @@ jobs:
           Get-Content .kubernetes/certmanager-cluster-issuer.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content .kubernetes/certmanager-cluster-issuer.tmp.yaml;
           Get-Content .kubernetes/certmanager-service-monitor.yaml | foreach { [Environment]::ExpandEnvironmentVariables($_) } | Set-Content .kubernetes/certmanager-service-monitor.tmp.yaml;
 
-          helm upgrade --install $env:APP_NAME oci://quay.io/jetstack/charts/cert-manager --atomic --namespace $env:KUBERNETES_NAMESPACE --version $env:CHART_VERSION -f certmanager-values.tmp.yaml;
+          helm upgrade --install $env:APP_NAME oci://quay.io/jetstack/charts/cert-manager --atomic --namespace $env:KUBERNETES_NAMESPACE --version $env:CHART_VERSION -f .kubernetes/certmanager-values.tmp.yaml;
           if ($LastExitCode -ne 0) 
           { 
               throw "error";
           }
 
-          kubectl apply -f certmanager-cluster-issuer.tmp.yaml;
+          kubectl apply -f .kubernetes/certmanager-cluster-issuer.tmp.yaml;
           if ($LastExitCode -ne 0) 
           { 
               throw "error";
           }
 
-          kubectl apply -f certmanager-service-monitor.tmp.yaml;
+          kubectl apply -f .kubernetes/certmanager-service-monitor.tmp.yaml;
           if ($LastExitCode -ne 0) 
           { 
               throw "error";
