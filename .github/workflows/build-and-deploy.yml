@@ -131,7 +131,7 @@ jobs:
         run: |
           $currentPorts = @(az policy assignment show -n SecurityCenterBuiltIn --scope "/subscriptions/$env:AZURE_SUBSCRIPTION_ID" --query "parameters.allowedservicePortsInKubernetesClusterPorts.value" -o json | ConvertFrom-Json | Where-Object { $_ -ne "-1" });
 
-          $ports = @("5672","15672","15692","4369","25672");
+          $ports = @("443","9402");
           $missingPorts = $ports | Where-Object { $currentPorts -notcontains $_ };
 
           if ($missingPorts.Count -gt 0) {
