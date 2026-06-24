@@ -129,7 +129,7 @@ jobs:
       - name: Update allowed Kubernetes service ports
         shell: pwsh
         run: |
-          $current = @(az policy assignment show -n SecurityCenterBuiltIn --scope "/subscriptions/${{ secrets.SUBSCRIPTION_ID }}" --query "parameters.allowedservicePortsInKubernetesClusterPorts.value" -o json | ConvertFrom-Json | Where-Object { $_ -ne "-1" });
+          $current = @(az policy assignment show -n SecurityCenterBuiltIn --scope "/subscriptions/$env:AZURE_SUBSCRIPTION_ID" --query "parameters.allowedservicePortsInKubernetesClusterPorts.value" -o json | ConvertFrom-Json | Where-Object { $_ -ne "-1" });
 
           $new = @("5672","15672","15692","4369","25672");
           $merged = ($current + $new) | Select-Object -Unique;
@@ -137,7 +137,7 @@ jobs:
 
           az policy assignment update `
             -n SecurityCenterBuiltIn `
-            --scope "/subscriptions/${{ secrets.SUBSCRIPTION_ID }}" `
+            --scope "/subscriptions/$env:AZURE_SUBSCRIPTION_ID" `
             --params "{`"allowedservicePortsInKubernetesClusterPorts`":{`"value`":$mergedJson}}";
 
       - name: GitHub Release
