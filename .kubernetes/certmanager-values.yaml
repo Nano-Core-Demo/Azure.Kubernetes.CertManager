@@ -105,29 +105,6 @@ webhook:
   serviceAccount:
     automountServiceAccountToken: false
   automountServiceAccountToken: false
-  volumes:
-    - name: serviceaccount-token
-      projected:
-        defaultMode: 0444
-        sources:
-          - serviceAccountToken:
-              expirationSeconds: 3607
-              path: token
-          - configMap:
-              name: kube-root-ca.crt
-              items:
-                - key: ca.crt
-                  path: ca.crt
-          - downwardAPI:
-              items:
-                - path: namespace
-                  fieldRef:
-                    apiVersion: v1
-                    fieldPath: metadata.namespace
-  volumeMounts:
-    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-      name: serviceaccount-token
-      readOnly: true
   affinity:
     podAntiAffinity:
       preferredDuringSchedulingIgnoredDuringExecution:
@@ -161,29 +138,6 @@ cainjector:
   serviceAccount:
     automountServiceAccountToken: false
   automountServiceAccountToken: false
-  volumes:
-    - name: serviceaccount-token
-      projected:
-        defaultMode: 0444
-        sources:
-          - serviceAccountToken:
-              expirationSeconds: 3607
-              path: token
-          - configMap:
-              name: kube-root-ca.crt
-              items:
-                - key: ca.crt
-                  path: ca.crt
-          - downwardAPI:
-              items:
-                - path: namespace
-                  fieldRef:
-                    apiVersion: v1
-                    fieldPath: metadata.namespace
-  volumeMounts:
-    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-      name: serviceaccount-token
-      readOnly: true
   resources:
     requests:
        cpu: 10m
