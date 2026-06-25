@@ -11,9 +11,9 @@ replicaCount: %KUBERNETES_REPLICA_COUNT%
 
 serviceAccount:
   create: true
-  automountServiceAccountToken: false
+  automountServiceAccountToken: true
 
-automountServiceAccountToken: false
+automountServiceAccountToken: true
   
 resources:
   requests:
@@ -103,8 +103,8 @@ webhook:
        cpu: 30m
        memory: 96Mi
   serviceAccount:
-    automountServiceAccountToken: false
-  automountServiceAccountToken: false
+    automountServiceAccountToken: true
+  automountServiceAccountToken: true
   affinity:
     podAntiAffinity:
       preferredDuringSchedulingIgnoredDuringExecution:
@@ -136,8 +136,8 @@ cainjector:
       drop:
       - ALL
   serviceAccount:
-    automountServiceAccountToken: false
-  automountServiceAccountToken: false
+    automountServiceAccountToken: true
+  automountServiceAccountToken: true
   resources:
     requests:
        cpu: 10m
