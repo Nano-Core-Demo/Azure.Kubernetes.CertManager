@@ -103,6 +103,7 @@ webhook:
        cpu: 30m
        memory: 96Mi
   serviceAccount:
+    create: true
     automountServiceAccountToken: true
   automountServiceAccountToken: true
   affinity:
@@ -136,6 +137,7 @@ cainjector:
       drop:
       - ALL
   serviceAccount:
+    create: true
     automountServiceAccountToken: true
   automountServiceAccountToken: true
   resources:
